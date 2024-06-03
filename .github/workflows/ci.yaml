@@ -13,33 +13,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3  # Update to the latest version
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4  # Update to the latest version
         with:
-          go-version: '1.16'
+          go-version: '1.18'  # Update to the desired Go version
 
-      - name: Build and Test
+      - name: Build the Go app
+        run: go build -o main .
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
         run: |
-          go build -o main .
-          go test ./...
-
-      - name: Build Docker Image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: Dockerfile
-          push: true
-          tags: |
-            your-docker-username/botgauge-app:latest
-
-      - name: Deploy to EKS Cluster
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EKS_HOST }}
-          username: ${{ secrets.EKS_USERNAME }}
-          key: ${{ secrets.EKS_PRIVATE_KEY }}
-          script: |
-            kubectl apply -f deployment.yaml
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/botgauge-app:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/botgauge-app:latest
