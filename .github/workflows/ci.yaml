@@ -1,0 +1,45 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.16'
+
+      - name: Build and Test
+        run: |
+          go build -o main .
+          go test ./...
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: |
+            your-docker-username/botgauge-app:latest
+
+      - name: Deploy to EKS Cluster
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EKS_HOST }}
+          username: ${{ secrets.EKS_USERNAME }}
+          key: ${{ secrets.EKS_PRIVATE_KEY }}
+          script: |
+            kubectl apply -f deployment.yaml
