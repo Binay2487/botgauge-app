@@ -1,5 +1,6 @@
 name: CI/CD Pipeline
 
+
 on:
   push:
     branches:
@@ -13,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # Update to the latest version that supports Node.js 20
       - name: Checkout Repository
         uses: actions/checkout@v3
 
