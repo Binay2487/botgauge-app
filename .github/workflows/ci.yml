@@ -48,12 +48,3 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/botgauge-app:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/botgauge-app:latest
-
-      #- name: Deploy to EKS Cluster
-      #  uses: appleboy/ssh-action@master
-      #  with:
-      #    host: ${{ secrets.EKS_HOST }}
-      #    username: ${{ secrets.EKS_USERNAME }}
-      #    key: ${{ secrets.EKS_PRIVATE_KEY }}
-      #    script: |
-      #      kubectl apply -f deployment.yaml
