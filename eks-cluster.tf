@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-2"  # Specify the AWS region where you want to create the EKS cluster
+  region = "us-west-2"  
 }
 
 # Define the VPC where the EKS cluster will be deployed (if not already created)
@@ -21,7 +21,7 @@ module "eks_cluster" {
   
   cluster_name      = "my-cluster"
   cluster_version   = "1.21"
-  subnets           = [aws_subnet.my_subnet.id]  # IDs of the subnets where the EKS worker nodes will be deployed
+  subnets           = [aws_subnet.my_subnet.id]  
   vpc_id            = aws_vpc.eks_cluster_vpc.id
   enable_irsa       = true
   tags = {
